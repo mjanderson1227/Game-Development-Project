@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0e029bfd8e975594695405ecf16070f4
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 21876
+  packageName: Playing Cards Pack
+  packageVersion: 1.1.0
+  assetPath: Assets/PlayingCards/Prefabs/2D/Spades/Spade_5.prefab
+  uploadId: 318610

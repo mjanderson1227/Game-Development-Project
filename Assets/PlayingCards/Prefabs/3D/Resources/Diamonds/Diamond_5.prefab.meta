@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8fd7742f3e571ec48a512e209b43b988
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 21876
+  packageName: Playing Cards Pack
+  packageVersion: 1.1.0
+  assetPath: Assets/PlayingCards/Prefabs/3D/Diamonds/Diamond_5.prefab
+  uploadId: 318610

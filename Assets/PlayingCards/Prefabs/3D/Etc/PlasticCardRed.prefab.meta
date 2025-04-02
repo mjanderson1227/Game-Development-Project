@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7bf6cb67a0e310342b337ae8db1c262e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 21876
+  packageName: Playing Cards Pack
+  packageVersion: 1.1.0
+  assetPath: Assets/PlayingCards/Prefabs/3D/Etc/PlasticCardRed.prefab
+  uploadId: 318610

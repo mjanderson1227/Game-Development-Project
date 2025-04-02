@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0831adf2dd057824aac921aa8458f7e0
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 21876
+  packageName: Playing Cards Pack
+  packageVersion: 1.1.0
+  assetPath: Assets/PlayingCards/Prefabs/2D/Clubs/Club_A.prefab
+  uploadId: 318610

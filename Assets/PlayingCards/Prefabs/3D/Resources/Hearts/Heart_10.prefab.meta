@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5439016d61bc7774d9775472799c3643
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 21876
+  packageName: Playing Cards Pack
+  packageVersion: 1.1.0
+  assetPath: Assets/PlayingCards/Prefabs/3D/Hearts/Heart_10.prefab
+  uploadId: 318610
