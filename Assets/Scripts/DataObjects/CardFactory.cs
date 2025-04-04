@@ -6,7 +6,7 @@ namespace DataObjects
     {
         private static readonly Array _suits = Enum.GetValues(typeof(Suit));
         private static readonly Random _random = new Random();
-        private static readonly string[] _ranks = { "Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King" };
+        private static readonly string[] _ranks = { "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
 
         public static Card CreateCard(Suit suit, string rank)
         {

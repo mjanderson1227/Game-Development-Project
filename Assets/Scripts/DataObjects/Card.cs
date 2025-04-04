@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace DataObjects
@@ -24,14 +23,19 @@ namespace DataObjects
             _value = CalculateValue();
         }
 
+        public bool IsAce()
+        {
+            return Rank == "A";
+        }
+
         private int CalculateValue()
         {
             // Calculate the card's value according to blackjack rules
-            if (Rank == "Jack" || Rank == "Queen" || Rank == "King")
+            if (Rank == "J" || Rank == "Q" || Rank == "K")
             {
                 return 10;
             }
-            else if (Rank == "Ace")
+            else if (Rank == "A")
             {
                 return 11; // Note: In blackjack, Ace can be 1 or 11
             }
@@ -55,7 +59,17 @@ namespace DataObjects
 
         public GameObject LoadModel()
         {
-            return Resources.Load<GameObject>($"{Suit.ToString()}/{Rank}");
+            var parsedSuit = Suit.ToString().Substring(0, Suit.ToString().Length - 1);
+            string modelPath = $"Cards/{Suit}/{parsedSuit}_{Rank}";
+            GameObject cardModel = Resources.Load<GameObject>(modelPath);
+
+            if (cardModel == null)
+            {
+                Debug.LogError($"Failed to load card model at path: {modelPath}. Make sure the model exists in the Resources folder.");
+                return null;
+            }
+
+            return cardModel;
         }
     }
 }

@@ -4,20 +4,58 @@ using UnityEngine;
 
 public class Player
 {
-    private int _score = 0;
     private List<Card> _hand = new();
-    private Vector3 _location;
-    public Player(Vector3 location) => this._location = location;
-    private bool _idle = false;
+    public Player(Vector3 location)
+    {
+        Location = location;
+        Idle = false;
+    }
 
     public void DealCard(Card card)
     {
         _hand.Add(card);
-        _score += card.Value;
     }
 
-    public int Score => _score;
-    public Vector3 Location => Location;
+    // Get the score of the player.  Use the threshold in order to determine what the value of ace is going to be.
+    public int CalculateScore(int threshold)
+    {
+        int totalScore = 0;
+        int aceCount = 0;
+
+        // First, calculate score for non-ace cards
+        foreach (var card in _hand)
+        {
+            if (!card.IsAce())
+            {
+                totalScore += card.Value;
+            }
+            else
+            {
+                aceCount++;
+            }
+        }
+
+        // Then handle aces optimally
+        for (int i = 0; i < aceCount; i++)
+        {
+            // If adding 11 would exceed threshold, use 1 instead
+            if (totalScore + 11 <= threshold)
+            {
+                totalScore += 11;
+            }
+            else
+            {
+                totalScore += 1;
+            }
+        }
+
+        return totalScore;
+    }
+    public Vector3 Location
+    {
+        get;
+        set;
+    }
     public bool Idle
     {
         get;
