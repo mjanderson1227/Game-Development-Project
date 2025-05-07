@@ -15,14 +15,19 @@ namespace Controllers
             scoreUI.text = $"Score: {newScore}";
         }
 
+        public void UpdateChips(int newChips)
+        {
+            var chipsUI = GameObject.Find("ChipsDisplay").GetComponent<TextMeshProUGUI>();
+            chipsUI.text = $"Chips: {newChips}";
+        }
+
         void Start()
         {
             if (onUserAction == null)
                 onUserAction = new UnityEvent<PlayerOption>();
 
             var gameController = GameObject.Find("GameController").GetComponent<GameController>();
-
-            onUserAction.AddListener(gameController.HandlePlayerChoice);
+            onUserAction.AddListener(gameController.DoChoice);
 
             var hitButton = GameObject.Find("HitButton").GetComponent<Button>();
             hitButton.onClick.AddListener(() => onUserAction.Invoke(PlayerOption.Hit));

@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using DataObjects;
+using UnityEditor.Rendering;
 using UnityEngine;
 
 namespace Controllers
@@ -19,6 +21,7 @@ namespace Controllers
         private int threshold = 21; // if both players bust then the threshold will increase
         private UIController uiController;
         private TableController tableController;
+        private Task CurrentDecision = Task.CompletedTask;
 
         private PlayerOption AiMakeDecision()
         {
@@ -34,13 +37,15 @@ namespace Controllers
 
         private async void WinGame()
         {
-            await Task.Delay(100);
+            await tableController.ShowFaceDownCards();
+            await Task.Delay(1000);
             gameOverScreen.Setup("You win!");
         }
 
         private async void LoseGame()
         {
-            await Task.Delay(100);
+            await tableController.ShowFaceDownCards();
+            await Task.Delay(1000);
             gameOverScreen.Setup("You lose.");
         }
 
@@ -137,7 +142,15 @@ namespace Controllers
             return ValidateRound();
         }
 
-        public async void HandlePlayerChoice(PlayerOption playerOption)
+        public void DoChoice(PlayerOption playerOption)
+        {
+            if (CurrentDecision.IsCompleted)
+            {
+                CurrentDecision = HandlePlayerChoice(playerOption);
+            }
+        }
+
+        public async Task HandlePlayerChoice(PlayerOption playerOption)
         {
             var shouldContinue = await PlayRound(playerOption);
             if (shouldContinue && !p1.Idle)
@@ -148,6 +161,7 @@ namespace Controllers
             while (shouldContinue && !p2.Idle)
             {
                 shouldContinue = await PlayRound(PlayerOption.Stand);
+                await Task.Delay(300);
             }
         }
 

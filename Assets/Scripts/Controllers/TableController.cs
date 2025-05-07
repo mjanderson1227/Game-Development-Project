@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DataObjects;
 using UnityEngine;
@@ -7,6 +8,7 @@ namespace Controllers
 {
     class TableController : MonoBehaviour
     {
+        private List<GameObject> faceDownCards = new List<GameObject>();
         private async Task ObjMoveFromTo(GameObject obj, Vector3 start, Vector3 end, float duration)
         {
             float elapsed = 0;
@@ -47,6 +49,38 @@ namespace Controllers
 
             await ObjMoveFromTo(instantiatedCard, pos, player.Location, 0.5f);
             player.Location += Vector3.right * 0.4f;
+            faceDownCards.Add(instantiatedCard);
+        }
+
+        public async Task RotateObjectAsync(GameObject targetObject, float duration = 1.0f)
+        {
+            Quaternion startRotation = targetObject.transform.rotation;
+            Quaternion targetRotation = startRotation * Quaternion.Euler(0f, 0f, 180f);
+
+            float elapsedTime = 0f;
+
+            while (elapsedTime < duration)
+            {
+                float t = elapsedTime / duration;
+
+                float smoothT = Mathf.SmoothStep(0f, 1f, t);
+
+                targetObject.transform.rotation = Quaternion.Slerp(startRotation, targetRotation, smoothT);
+
+                await Task.Yield();
+
+                elapsedTime += Time.deltaTime;
+            }
+
+            targetObject.transform.rotation = targetRotation;
+        }
+
+        public async Task ShowFaceDownCards()
+        {
+            foreach (GameObject card in faceDownCards)
+            {
+                await RotateObjectAsync(card);
+            }
         }
     }
 }
