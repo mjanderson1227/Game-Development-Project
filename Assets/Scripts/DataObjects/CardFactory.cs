@@ -1,6 +1,6 @@
 using System;
 
-namespace DataObjects
+namespace Assets.Scripts.DataObjects
 {
     public class CardFactory
     {

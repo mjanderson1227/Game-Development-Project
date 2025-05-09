@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace DataObjects
+namespace Assets.Scripts.DataObjects
 {
     public enum Suit
     {

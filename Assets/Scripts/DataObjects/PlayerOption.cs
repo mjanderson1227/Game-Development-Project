@@ -1,4 +1,4 @@
-namespace DataObjects
+namespace Assets.Scripts.DataObjects
 {
     public enum PlayerOption
     {

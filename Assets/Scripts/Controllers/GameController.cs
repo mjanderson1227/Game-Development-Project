@@ -1,13 +1,10 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
+using Assets.Scripts.DataObjects;
+using Unity.VisualScripting;
 using System.Threading.Tasks;
-using DataObjects;
-using UnityEditor.Rendering;
 using UnityEngine;
 
-namespace Controllers
+namespace Assets.Scripts.Controllers
 {
     public class GameController : MonoBehaviour
     {
@@ -18,10 +15,13 @@ namespace Controllers
         private Player p1; // player
         private Player p2; // dealer
         private int round = 0;
-        private int threshold = 21; // if both players bust then the threshold will increase
+        private readonly int threshold = 21; // if both players bust then the threshold will increase
         private UIController uiController;
         private TableController tableController;
+        private AudioController audioController;
         private Task CurrentDecision = Task.CompletedTask;
+        private bool isBettingPhase = false; // TODO: If time permits, add a betting mechanic here.
+        private int currentBet = 0;
 
         private PlayerOption AiMakeDecision()
         {
@@ -35,21 +35,48 @@ namespace Controllers
             return PlayerOption.Stand;
         }
 
-        private async void WinGame()
+        private void UpdateChips(int newChips)
+        {
+            p1.Chips = newChips;
+            uiController.UpdateChips(newChips);
+        }
+
+        private async Task EndRound(RoundStatus roundStatus)
         {
             await tableController.ShowFaceDownCards();
             await Task.Delay(1000);
-            gameOverScreen.Setup("You win!");
+
+            switch (roundStatus)
+            {
+                case RoundStatus.Win:
+                    audioController.WinSound();
+                    gameOverScreen.Setup("You win!");
+                    UpdateChips(p1.Chips + currentBet);
+                    break;
+                case RoundStatus.Lose:
+                    audioController.LoseSound();
+                    gameOverScreen.Setup("You lose.");
+                    UpdateChips(p1.Chips - currentBet);
+                    break;
+                case RoundStatus.Tie:
+                    audioController.WinSound();
+                    gameOverScreen.Setup("Tie Game.");
+                    break;
+            }
+
+            return;
+
+            if (p1.Chips <= 0)
+            {
+                gameOverScreen.Setup("You lose.");
+            }
+            else if (p1.Chips >= 400)
+            {
+                gameOverScreen.Setup("You win!");
+            }
         }
 
-        private async void LoseGame()
-        {
-            await tableController.ShowFaceDownCards();
-            await Task.Delay(1000);
-            gameOverScreen.Setup("You lose.");
-        }
-
-        private bool ValidateRound()
+        private async Task<bool> ValidateRound()
         {
             var p1Score = p1.CalculateScore(threshold);
             var p2Score = p2.CalculateScore(threshold);
@@ -57,17 +84,17 @@ namespace Controllers
             // Check for explicit loss
             if (p1Score > threshold && p2Score <= threshold)
             {
-                LoseGame();
+                await EndRound(RoundStatus.Lose);
                 return false;
             }
             else if (p1Score <= threshold && p2Score > threshold)
             {
-                WinGame();
+                await EndRound(RoundStatus.Win);
                 return false;
             }
             else if (p1Score > threshold && p2Score > threshold)
             {
-                threshold *= 2;
+                await EndRound(RoundStatus.Tie);
                 return true;
             }
 
@@ -76,16 +103,17 @@ namespace Controllers
             {
                 if (p1Score > p2Score)
                 {
-                    WinGame();
+                    await EndRound(RoundStatus.Win);
                     return false;
                 }
                 else if (p2Score > p1Score)
                 {
-                    LoseGame();
+                    await EndRound(RoundStatus.Lose);
                     return false;
                 }
                 else
                 {
+                    await EndRound(RoundStatus.Tie);
                     return false;
                 }
             }
@@ -104,6 +132,7 @@ namespace Controllers
                         var card = deck.Pop();
                         p1.DealCard(card);
                         await tableController.DealCard(card, p1);
+                        audioController.CardFlipSound();
                         uiController.UpdateScore(p1.CalculateScore(threshold));
                         break;
                     case PlayerOption.Stand:
@@ -118,20 +147,20 @@ namespace Controllers
                 switch (decision)
                 {
                     case PlayerOption.Hit:
-                        Debug.Log("HIT");
                         var card = deck.Pop();
                         p2.DealCard(card);
                         if (round == 0)
                         {
                             await tableController.DealCard(card, p2);
+                            audioController.CardFlipSound();
                         }
                         else
                         {
                             await tableController.DealCardFaceDown(card, p2);
+                            audioController.CardFlipSound();
                         }
                         break;
                     case PlayerOption.Stand:
-                        Debug.Log("STAND");
                         p2.Idle = true;
                         break;
                 }
@@ -139,7 +168,7 @@ namespace Controllers
 
             round++;
 
-            return ValidateRound();
+            return await ValidateRound();
         }
 
         public void DoChoice(PlayerOption playerOption)
@@ -152,6 +181,11 @@ namespace Controllers
 
         public async Task HandlePlayerChoice(PlayerOption playerOption)
         {
+            if (isBettingPhase)
+            {
+                return;
+            }
+
             var shouldContinue = await PlayRound(playerOption);
             if (shouldContinue && !p1.Idle)
             {
@@ -173,6 +207,7 @@ namespace Controllers
             p2 = new(p2Location);
             deck = new(CardFactory.CreateShuffledDeck());
             tableController = GameObject.Find("Table").GetComponent<TableController>();
+            audioController = GameObject.Find("SoundEffects").GetComponent<AudioController>();
 
             _ = PlayRound(PlayerOption.Hit);
         }

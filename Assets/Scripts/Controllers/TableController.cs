@@ -1,14 +1,15 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DataObjects;
+using Assets.Scripts.DataObjects;
 using UnityEngine;
 
-namespace Controllers
+namespace Assets.Scripts.Controllers
 {
     class TableController : MonoBehaviour
     {
         private List<GameObject> faceDownCards = new List<GameObject>();
+        private List<GameObject> cards = new List<GameObject>();
+
         private async Task ObjMoveFromTo(GameObject obj, Vector3 start, Vector3 end, float duration)
         {
             float elapsed = 0;
@@ -38,6 +39,7 @@ namespace Controllers
 
             await ObjMoveFromTo(instantiatedCard, pos, player.Location, 0.5f);
             player.Location += Vector3.right * 0.4f;
+            cards.Add(instantiatedCard);
         }
 
         public async Task DealCardFaceDown(Card card, Player player)
@@ -50,6 +52,7 @@ namespace Controllers
             await ObjMoveFromTo(instantiatedCard, pos, player.Location, 0.5f);
             player.Location += Vector3.right * 0.4f;
             faceDownCards.Add(instantiatedCard);
+            cards.Add(instantiatedCard);
         }
 
         public async Task RotateObjectAsync(GameObject targetObject, float duration = 1.0f)
@@ -73,6 +76,14 @@ namespace Controllers
             }
 
             targetObject.transform.rotation = targetRotation;
+        }
+
+        public void ClearTable()
+        {
+            foreach (var card in cards)
+            {
+                Destroy(card);
+            }
         }
 
         public async Task ShowFaceDownCards()

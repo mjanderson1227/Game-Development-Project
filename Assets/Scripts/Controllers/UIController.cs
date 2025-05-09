@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Assets.Scripts.DataObjects;
 using TMPro;
 
-namespace Controllers
+namespace Assets.Scripts.Controllers
 {
     class UIController : MonoBehaviour
     {
@@ -23,8 +24,7 @@ namespace Controllers
 
         void Start()
         {
-            if (onUserAction == null)
-                onUserAction = new UnityEvent<PlayerOption>();
+            onUserAction ??= new UnityEvent<PlayerOption>();
 
             var gameController = GameObject.Find("GameController").GetComponent<GameController>();
             onUserAction.AddListener(gameController.DoChoice);
