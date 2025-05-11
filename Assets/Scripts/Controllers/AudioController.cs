@@ -7,6 +7,7 @@ public class AudioController : MonoBehaviour
     [SerializeField] private AudioClip cardFlip;
     [SerializeField] private AudioClip loseSound;
     [SerializeField] private AudioClip winSound;
+    [SerializeField] private AudioClip hitOrStand;
 
     public void CardFlipSound()
     {
@@ -21,5 +22,10 @@ public class AudioController : MonoBehaviour
     public void WinSound()
     {
         audioSource.PlayOneShot(winSound);
+    }
+
+    public void HitOrStandSound()
+    {
+        audioSource.PlayOneShot(hitOrStand);
     }
 }

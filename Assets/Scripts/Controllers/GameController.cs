@@ -64,16 +64,14 @@ namespace Assets.Scripts.Controllers
                     break;
             }
 
-            return;
-
-            if (p1.Chips <= 0)
-            {
-                gameOverScreen.Setup("You lose.");
-            }
-            else if (p1.Chips >= 400)
-            {
-                gameOverScreen.Setup("You win!");
-            }
+            // if (p1.Chips <= 0)
+            // {
+            //     gameOverScreen.Setup("You lose.");
+            // }
+            // else if (p1.Chips >= 400)
+            // {
+            //     gameOverScreen.Setup("You win!");
+            // }
         }
 
         private async Task<bool> ValidateRound()
@@ -84,16 +82,20 @@ namespace Assets.Scripts.Controllers
             // Check for explicit loss
             if (p1Score > threshold && p2Score <= threshold)
             {
+                await tableController.EmitSmoke(p1);
                 await EndRound(RoundStatus.Lose);
                 return false;
             }
             else if (p1Score <= threshold && p2Score > threshold)
             {
+                await tableController.EmitSmoke(p2);
                 await EndRound(RoundStatus.Win);
                 return false;
             }
             else if (p1Score > threshold && p2Score > threshold)
             {
+                await tableController.EmitSmoke(p1);
+                await tableController.EmitSmoke(p2);
                 await EndRound(RoundStatus.Tie);
                 return true;
             }
@@ -209,7 +211,8 @@ namespace Assets.Scripts.Controllers
             tableController = GameObject.Find("Table").GetComponent<TableController>();
             audioController = GameObject.Find("SoundEffects").GetComponent<AudioController>();
 
-            _ = PlayRound(PlayerOption.Hit);
+            DoChoice(PlayerOption.Hit);
+            audioController.HitOrStandSound();
         }
     }
 }

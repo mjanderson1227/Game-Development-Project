@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Assets.Scripts.DataObjects;
+using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Scripts.Controllers
 {
     class TableController : MonoBehaviour
     {
+        [SerializeField] private GameObject smokePrefab;
         private List<GameObject> faceDownCards = new List<GameObject>();
         private List<GameObject> cards = new List<GameObject>();
 
@@ -88,9 +90,25 @@ namespace Assets.Scripts.Controllers
 
         public async Task ShowFaceDownCards()
         {
-            foreach (GameObject card in faceDownCards)
+            foreach (var card in faceDownCards)
             {
                 await RotateObjectAsync(card);
+            }
+        }
+
+        public async Task EmitSmoke(Player p)
+        {
+            var location = p.Location;
+            GameObject smoke = Instantiate(smokePrefab, location, Quaternion.Euler(-90, 0, 0));
+
+            if (smoke.TryGetComponent<ParticleSystem>(out var particleSystem))
+            {
+                particleSystem.Play();
+
+                var duration = particleSystem.main.duration + particleSystem.main.startLifetime.constantMax;
+
+                await Task.Delay(Mathf.CeilToInt(duration * 1000));
+                Destroy(smoke);
             }
         }
     }

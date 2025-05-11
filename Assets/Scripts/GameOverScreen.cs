@@ -11,8 +11,8 @@ public class GameOverScreen : MonoBehaviour
         textObject.text = text;
     }
 
-    public void RestartButton()
+    public void TitlsScreenButton()
     {
-        SceneManager.LoadScene("Game");
+        SceneManager.LoadScene("TitleScreen");
     }
 }
